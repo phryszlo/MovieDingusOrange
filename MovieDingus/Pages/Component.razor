@@ -1,0 +1,354 @@
+﻿@page "/component"
+@using System
+@using System.Collections.Generic
+@using System.IO
+@using System.IO.Compression
+@using System.Text.Json
+@using System.Linq
+@using System.Globalization
+@inject IJSRuntime JS
+@inject ILogger<Component> _logger
+
+<PageTitle>Le Component</PageTitle>
+
+<div class="LeComponent">
+    <h3>Component thing</h3>
+    @*<button @onclick="@(() => ImportExports())">download</button>*@
+    <button @onclick="ClickHandler">download</button>
+    <button @onclick="ProcessJsonFiles">json me</button>
+
+</div>
+
+
+
+@code {
+
+    public static string mdb_dl_root = "http://files.tmdb.org/p/exports/";
+    public static string mdb_tvnetwork_segment = "tv_network_ids_{MM_dd_yyyy}.json.gz";
+
+
+    public static List<string> export_urls = new List<string>()
+    {
+        "movie_ids_MM_DD_YYYY.json.gz",
+        "tv_series_ids_MM_DD_YYYY.json.gz",
+        "person_ids_MM_DD_YYYY.json.gz",
+        "collection_ids_MM_DD_YYYY.json.gz",
+        "tv_network_ids_MM_DD_YYYY.json.gz",
+        "keyword_ids_MM_DD_YYYY.json.gz",
+        "production_company_ids_MM_DD_YYYY.json.gz"
+    };
+
+
+    //Custom comparer for strings containing numbers (dates) to sort only by those numbers.
+    public class Listy : IComparer<string>
+    {
+        public int Compare(string? a, string? b)
+        {
+            string date1 = "0"; 
+            string date2 = "0";
+            if (a is not null && b is not null)
+            {
+                date1 = String.Join("", a.Where(char.IsDigit));
+                date2 = String.Join("", b.Where(char.IsDigit));
+            }
+            if (Convert.ToInt32(date1) > Convert.ToInt32(date2))
+            {
+                return 1;
+
+            }
+            else if (date1 == date2)
+            {
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+    }
+
+
+    Task DateTheExportUrls(bool yesterday)
+    {
+        //yesterday flag is set for the option of using yesterday's date in the file names
+        //instead of whatever is already there. this will probably be deprecated.
+        if (!yesterday)
+        {
+            export_urls.Sort();
+
+            List<string> download_names =
+                Directory.GetFiles("./Downloads").Where(g => g.EndsWith(".json"))
+                .ToList();
+            List<DateTime> filedates = new List<DateTime>();
+            List<string> filestrings = new List<string>();
+
+            for (int d = 0; d < download_names.Count; d++)
+            {
+                //we don't want the full path, just the file name, so trim it up
+                download_names[d] = Path.GetFileName(download_names[d]);
+
+                string dn = download_names[d];
+                try
+                {
+                    string s = dn.Substring(dn.IndexOf("ids_") + 4, dn.LastIndexOf('.')
+                        - dn.IndexOf("ids_") - 4);
+                    filedates.Add(DateTime.Parse(s.Replace('_', '/')));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            //download_names now has MM_dd_yyyy formatted dates
+
+            filedates.Sort((a, b) => a.CompareTo(b));
+            download_names.Sort(new Listy());
+
+            string xu, fd, xn;
+
+            //the already-filled (expected) export_urls list loop (names wanted by the API)
+            for (int j = 0; j < export_urls.Count; j++)
+            {
+
+                //the already-downloaded files list loop ((size of download_names == filedates) = TRUE)
+                for (int q = 0; q < filedates.Count; q++)
+                {
+                    //just shorthand
+                    xn = download_names[q];
+                    xu = export_urls[j];
+
+                    //we're trying to get the date of the most recent file of this name from the downloads
+                    fd = filedates[q].ToString("MM_dd_yyyy", CultureInfo.InvariantCulture);
+                    int startindex = 0;  
+
+
+                    var len_xn = xn.LastIndexOf("ids_") + 4;
+                    var len_xu = xu.LastIndexOf("ids_") + 4;
+
+
+                    //Is this is >= second replacement? 
+                    //If so, it will have the full http://... (mdb_dl_root) prefix.
+                    //If so, do not re-add the mdb_dl_root prefix.
+                    //If so, look for an actual date instead of MM_DD_YYYY to replace.
+                    if (xu.StartsWith(mdb_dl_root))
+                    {
+                        startindex = mdb_dl_root.Length + 1;
+                        var one = xu.Substring(startindex - 1, len_xu - startindex + 1);
+                        var two = xn.Substring(0, len_xn);
+                        if (one == two) //then this is a match
+                        {
+
+                            //load the date portion into a var. it's 10 chars long. last _ occurs after the dd part.
+                            string datepart = xu.Substring(xu.LastIndexOf('_') - 5, 10);
+
+                            export_urls[j] = export_urls[j].Replace(datepart,
+                                filedates[q].ToString("MM_dd_yyyy"));
+                        }
+                    }
+                    else
+                    {
+                        if (xu.Substring(startindex, len_xu)
+                            == xn.Substring(startindex, len_xn)) //then this is a match
+                        {
+                            export_urls[j] = mdb_dl_root + export_urls[j].Replace("MM_DD_YYYY",
+                                filedates[q].ToString("MM_dd_yyyy"));
+                        }
+                    }
+                    //}  end of filename matching
+
+
+                }// end of filedates (q) loop
+
+            }//end of xurls loop (j) -- BTW WTF with these letters? j and q? d?
+
+            _logger.LogInformation("so where are we now?");
+        }
+        else
+        {
+            for (int i = 0; i < export_urls.Count; i++)
+            {
+                export_urls[i] = mdb_dl_root + export_urls[i].Replace("MM_DD_YYYY",
+                    DateTime.Now.AddDays(-1).ToString("MM_dd_yyyy"));
+            }
+        } // end function
+
+        _logger.LogInformation(export_urls[3]);
+        return Task.CompletedTask;
+
+    }
+
+
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await DateTheExportUrls();
+    //}
+
+
+    private string gz_url_segment =
+        mdb_tvnetwork_segment.Replace("{MM_dd_yyyy}",
+        DateTime.Now.AddDays(-1).ToString("MM_dd_yyyy"));
+    private string url = "";
+
+    //public class Network
+    //{
+    //    public int id { get; set; }
+    //    public string? name { get; set; }
+    //}
+    //public class NetworkCollection
+    //{
+    //    public NetworkCollection()
+    //    {
+    //        Networks = new List<Network>
+    //();
+    //    }
+    //    public List<Network>
+    //        Networks
+    //    { get; set; }
+    //}
+
+
+
+    /*
+    * THE CLICK
+    */
+
+    void ClickHandler(MouseEventArgs args)
+    {
+        DateTheExportUrls(true);
+
+        ImportExports();
+        return;
+
+
+    }
+
+    private async void ImportExports()
+    {
+        //ProcessJsonFile(export_urls[0]);
+        //return;
+
+        var file = "./Downloads/" + gz_url_segment;
+        var jsonfile = file.Substring(0, file.LastIndexOf('.'));
+        //_logger.LogInformation(mdb_dl_root + gz_url_segment);
+        //url = mdb_dl_root + gz_url_segment;
+
+        //for (int i = 0; i < export_urls.Count; i++)
+        //{
+        //	export_urls[i] = mdb_dl_root + export_urls[i].Replace("MM_DD_YYYY",
+        //		DateTime.Now.AddDays(-1).ToString("MM_dd_yyyy"));
+        //}
+
+        for (int i = 0; i < export_urls.Count; i++)
+        {
+            url = export_urls[i];
+            file = "./Downloads/" +
+            export_urls[i].Substring(export_urls[i].LastIndexOf('/') + 1);
+            jsonfile = file.Substring(0, file.LastIndexOf('.'));
+
+            await DownloadFileAsync(url, file);
+            UnzipFile(file);
+            //this file is all simple objects {"":"","":""} in separate lines
+            //& not properly formed JSON. JsonizeFile turns it into parseable JSON.
+            JsonizeFile(jsonfile); //global.cs
+        }
+
+
+    }
+
+    async void ProcessJsonFiles()
+    {
+        await DateTheExportUrls(false);
+
+        for (int i = 0; i < export_urls.Count; i++)
+        {
+            var file = "./Downloads/" +
+            export_urls[i].Substring(export_urls[i].LastIndexOf('/') + 1);
+            file = file.Substring(0, file.LastIndexOf('.'));
+            await ProcessJsonFile(file);
+
+        }
+    }
+
+    async Task ProcessJsonFile(string file)
+    {
+        //var file = "./Downloads/" +
+        //    export_urls[0].Substring(export_urls[0].LastIndexOf('/') + 1);
+        //file = file.Substring(0, file.LastIndexOf('.'));
+
+        string json = await File.ReadAllTextAsync(file);
+        var options = new JsonDocumentOptions
+            {
+                AllowTrailingCommas = true,
+            };
+        using (JsonDocument document = JsonDocument.Parse(json, options))
+        {
+            JsonElement root = document.RootElement;
+
+            _logger.LogInformation(root.ValueKind.ToString());
+
+            var thing = root.EnumerateObject();
+
+
+            using var thingy = thing.GetEnumerator();
+
+            //first up, the root object
+            while (thingy.MoveNext())
+            {
+                var current = thingy.Current;
+
+                //this will be the property name of the array,
+                //e.g. "production_company-list"
+                //deal with this plural spelling problem and that will be your table name
+                _logger.LogInformation(current.Name);
+                var doodad = current.Value.EnumerateArray();
+
+                //secondly, the big array of all things
+                while (doodad.MoveNext())
+                {
+                    var currant = doodad.Current.EnumerateObject();
+
+                    //lastly, the object #1, where we can get the property names
+                    while (currant.MoveNext())
+                    {
+                        var merrywang = currant.Current;
+                        _logger.LogInformation("And the winner is: " + merrywang.Name);
+                    }
+
+
+                    break;
+
+                }
+                break;
+                //I only want the first jsonproperty, but I don't yet know
+                //how to just grab the first from the outset
+                //so I had to enumerate the entire thing first;
+                //but I would like to stop once I have the property names
+                //so I am just breaking out of the whiles once I have them
+                //until I figure out the secret ingredient to just taking one...
+                //if I continue to care, that is.
+            }
+
+        }
+
+        //return Task.CompletedTask;
+
+
+        //.Any(o => o.EnumerateObject().Any(p => p.Name == propertyName));
+
+        //JsonElement networksElement = root.GetProperty("Networks");
+        //NetworkCollection netList = new NetworkCollection();
+
+        //foreach (JsonElement network in networksElement.EnumerateArray())
+        //{
+        //    Network net = new Network();
+        //    net.id = Convert.ToInt32(network.GetProperty("id").ToString());
+        //    net.name = network.GetProperty("name").ToString();
+        //    netList.Networks.Add(net);
+
+        //}
+    }
+
+        }
+        }

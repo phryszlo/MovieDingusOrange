@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieDingus", "MovieDingus\MovieDingus.csproj", "{71280F19-A3B0-47AE-853D-BBD9222D76AF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieDbApi", "MovieDbApi\MovieDbApi.csproj", "{4A3AA3CF-C34D-45FA-8F71-D175B4D3424D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1656E744-4742-4631-AF25-0EC5390061CC}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71280F19-A3B0-47AE-853D-BBD9222D76AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71280F19-A3B0-47AE-853D-BBD9222D76AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71280F19-A3B0-47AE-853D-BBD9222D76AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71280F19-A3B0-47AE-853D-BBD9222D76AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A3AA3CF-C34D-45FA-8F71-D175B4D3424D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A3AA3CF-C34D-45FA-8F71-D175B4D3424D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A3AA3CF-C34D-45FA-8F71-D175B4D3424D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A3AA3CF-C34D-45FA-8F71-D175B4D3424D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {264D4A8B-D8B8-4602-806E-7E60B0DF4725}
+	EndGlobalSection
+EndGlobal

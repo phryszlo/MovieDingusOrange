@@ -1,0 +1,53 @@
+Movies	/p/exports	movie_ids_MM_DD_YYYY.json.gz
+TV Series	/p/exports	tv_series_ids_MM_DD_YYYY.json.gz
+People	/p/exports	person_ids_MM_DD_YYYY.json.gz
+Collections	/p/exports	collection_ids_MM_DD_YYYY.json.gz
+TV Networks	/p/exports	tv_network_ids_MM_DD_YYYY.json.gz
+Keywords	/p/exports	keyword_ids_MM_DD_YYYY.json.gz
+Production Companies	/p/exports	production_company_ids_MM_DD_YYYY.json.gz
+
+
+movie_ids_MM_DD_YYYY.json.gz
+tv_series_ids_MM_DD_YYYY.json.gz
+person_ids_MM_DD_YYYY.json.gz
+collection_ids_MM_DD_YYYY.json.gz
+tv_network_ids_MM_DD_YYYY.json.gz
+keyword_ids_MM_DD_YYYY.json.gz
+production_company_ids_MM_DD_YYYY.json.gz
+
+
+
+MovieDingus.Pages.Component: Information: /collection-list
+MovieDingus.Pages.Component: Information: And the winner is: id
+MovieDingus.Pages.Component: Information: And the winner is: name
+MovieDingus.Pages.Component: Information: Object
+MovieDingus.Pages.Component: Information: /keyword-list
+MovieDingus.Pages.Component: Information: And the winner is: id
+MovieDingus.Pages.Component: Information: And the winner is: name
+MovieDingus.Pages.Component: Information: Object
+MovieDingus.Pages.Component: Information: /movie-list
+MovieDingus.Pages.Component: Information: And the winner is: adult
+MovieDingus.Pages.Component: Information: And the winner is: id
+MovieDingus.Pages.Component: Information: And the winner is: original_title
+MovieDingus.Pages.Component: Information: And the winner is: popularity
+MovieDingus.Pages.Component: Information: And the winner is: video
+MovieDingus.Pages.Component: Information: Object
+MovieDingus.Pages.Component: Information: /person-list
+MovieDingus.Pages.Component: Information: And the winner is: adult
+MovieDingus.Pages.Component: Information: And the winner is: id
+MovieDingus.Pages.Component: Information: And the winner is: name
+MovieDingus.Pages.Component: Information: And the winner is: popularity
+
+MovieDingus.Pages.Component: Information: Object
+MovieDingus.Pages.Component: Information: /production_company-list
+MovieDingus.Pages.Component: Information: And the winner is: id
+MovieDingus.Pages.Component: Information: And the winner is: name
+MovieDingus.Pages.Component: Information: Object
+MovieDingus.Pages.Component: Information: /tv_network-list
+MovieDingus.Pages.Component: Information: And the winner is: id
+MovieDingus.Pages.Component: Information: And the winner is: name
+MovieDingus.Pages.Component: Information: Object
+MovieDingus.Pages.Component: Information: /tv_series-list
+MovieDingus.Pages.Component: Information: And the winner is: id
+MovieDingus.Pages.Component: Information: And the winner is: original_name
+MovieDingus.Pages.Component: Information: And the winner is: popularity
