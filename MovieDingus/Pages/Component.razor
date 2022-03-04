@@ -40,7 +40,7 @@
 
 
     //Custom comparer for strings containing numbers (dates) to sort only by those numbers.
-    public class Listy : IComparer<string>
+    public class IntraStringDateComparer : IComparer<string>
     {
         public int Compare(string? a, string? b)
         {
@@ -76,9 +76,11 @@
         {
             export_urls.Sort();
 
+            //get a list of .json files in Downloads directory
             List<string> download_names =
                 Directory.GetFiles("./Downloads").Where(g => g.EndsWith(".json"))
                 .ToList();
+
             List<DateTime> filedates = new List<DateTime>();
             List<string> filestrings = new List<string>();
 
@@ -100,10 +102,10 @@
                 }
             }
 
-            //download_names now has MM_dd_yyyy formatted dates
+            //download_names now has MM_dd_yyyy formatted actual number dates
 
             filedates.Sort((a, b) => a.CompareTo(b));
-            download_names.Sort(new Listy());
+            download_names.Sort(new IntraStringDateComparer());
 
             string xu, fd, xn;
 
@@ -127,9 +129,13 @@
                     var len_xu = xu.LastIndexOf("ids_") + 4;
 
 
-                    //Is this is >= second replacement? 
+                    // Q: can't we just be looking for the first isdigit or something? LINQ?
+                    //      I mean, this method seems too complicated.
+
+
+                    //Is this >= second replacement? 
                     //If so, it will have the full http://... (mdb_dl_root) prefix.
-                    //If so, do not re-add the mdb_dl_root prefix.
+                    //If so, do not re-add the mdb_dl_root prefix (i.e. mdb_dl_root). (or we get http://...http://...http://...)
                     //If so, look for an actual date instead of MM_DD_YYYY to replace.
                     if (xu.StartsWith(mdb_dl_root))
                     {

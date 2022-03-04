@@ -4,9 +4,9 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MovieDingus.Migrations
+namespace MovieDbApi.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class goober : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -53,13 +53,13 @@ namespace MovieDingus.Migrations
                 name: "Collections",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: true)
+                    name = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Collections", x => x.Id);
+                    table.PrimaryKey("PK_Collections", x => x.id);
                 });
 
             migrationBuilder.CreateTable(

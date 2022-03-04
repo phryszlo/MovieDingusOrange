@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieDbApi.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MovieDbApi.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    partial class MovieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220301034420_goober")]
+    partial class goober
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -218,7 +220,7 @@ namespace MovieDbApi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MovieDbApi.Data.collection", b =>
+            modelBuilder.Entity("MovieDbApi.Data.Collection", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -234,121 +236,121 @@ namespace MovieDbApi.Migrations
                     b.ToTable("Collections");
                 });
 
-            modelBuilder.Entity("MovieDbApi.Data.keyword", b =>
+            modelBuilder.Entity("MovieDbApi.Data.Keyword", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("Keywords");
                 });
 
-            modelBuilder.Entity("MovieDbApi.Data.movie", b =>
+            modelBuilder.Entity("MovieDbApi.Data.Movie", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("adult")
+                    b.Property<bool>("Adult")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("original_title")
+                    b.Property<string>("Original_Title")
                         .HasColumnType("text");
 
-                    b.Property<int?>("popularity")
+                    b.Property<int?>("Popularity")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("video")
+                    b.Property<bool>("Video")
                         .HasColumnType("boolean");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("MovieDbApi.Data.person", b =>
+            modelBuilder.Entity("MovieDbApi.Data.Person", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("adult")
+                    b.Property<bool>("Adult")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int?>("popularity")
+                    b.Property<int?>("Popularity")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("video")
+                    b.Property<bool>("Video")
                         .HasColumnType("boolean");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("Persons");
                 });
 
-            modelBuilder.Entity("MovieDbApi.Data.production_company", b =>
+            modelBuilder.Entity("MovieDbApi.Data.ProductionCompany", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.ToTable("ProductionCompanies");
+                    b.ToTable("Production_Companies");
                 });
 
-            modelBuilder.Entity("MovieDbApi.Data.tv_network", b =>
+            modelBuilder.Entity("MovieDbApi.Data.TVNetwork", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.ToTable("TVNetworks");
+                    b.ToTable("TV_Networks");
                 });
 
-            modelBuilder.Entity("MovieDbApi.Data.tv_series", b =>
+            modelBuilder.Entity("MovieDbApi.Data.TVSeries", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("name")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.Property<int?>("popularity")
+                    b.Property<int?>("Popularity")
                         .HasColumnType("integer");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.ToTable("TVSerieses");
+                    b.ToTable("TV_Serieses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

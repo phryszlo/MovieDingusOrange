@@ -6,47 +6,47 @@ using System.Threading.Tasks;
 
 namespace MovieDbApi.Data
 {
-    public class Person
+    public class person
     {
-        public int Id { get; set; }
-        public bool Adult { get; set; }
-        public string? Name { get; set; }
-        public int? Popularity { get; set; }
-        public bool Video { get; set; }
+        public int id { get; set; }
+        public bool adult { get; set; }
+        public string? name { get; set; }
+        public int? popularity { get; set; }
+        public bool video { get; set; }
     }
-    public class Production_Company
+    public class production_company
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+        public int id { get; set; }
+        public string? name { get; set; }
     }
-    public class TV_Network
+    public class tv_network
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+        public int id { get; set; }
+        public string? name { get; set; }
     }
-    public class Movie
+    public class movie
     {
-        public int Id { get; set; }
-        public bool Adult { get; set; }
-        public string? Original_Title { get; set; }
-        public int? Popularity { get; set; }
-        public bool Video { get; set; }
+        public int id { get; set; }
+        public bool adult { get; set; }
+        public string? original_title { get; set; }
+        public int? popularity { get; set; }
+        public bool video { get; set; }
     }
-    public class Collection
+    public class collection
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+        public int id { get; set; }
+        public string? name { get; set; }
     }
-    public class Keyword
+    public class keyword
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+        public int id { get; set; }
+        public string? name { get; set; }
     }
-    public class TV_Series
+    public class tv_series
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public int? Popularity { get; set; }
+        public int id { get; set; }
+        public string? name { get; set; }
+        public int? popularity { get; set; }
     }
 
 }

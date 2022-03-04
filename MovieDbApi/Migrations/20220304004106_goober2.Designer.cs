@@ -4,16 +4,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MovieDingus.Data;
+using MovieDbApi.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MovieDingus.Migrations
+namespace MovieDbApi.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    [Migration("20220227182717_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20220304004106_goober2")]
+    partial class goober2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -220,7 +220,7 @@ namespace MovieDingus.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MovieDingus.Data.Collection", b =>
+            modelBuilder.Entity("MovieDbApi.Data.Collection", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,7 +236,7 @@ namespace MovieDingus.Migrations
                     b.ToTable("Collections");
                 });
 
-            modelBuilder.Entity("MovieDingus.Data.Keyword", b =>
+            modelBuilder.Entity("MovieDbApi.Data.Keyword", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -252,7 +252,7 @@ namespace MovieDingus.Migrations
                     b.ToTable("Keywords");
                 });
 
-            modelBuilder.Entity("MovieDingus.Data.Movie", b =>
+            modelBuilder.Entity("MovieDbApi.Data.Movie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -263,7 +263,7 @@ namespace MovieDingus.Migrations
                     b.Property<bool>("Adult")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("Original_Title")
+                    b.Property<string>("OriginalTitle")
                         .HasColumnType("text");
 
                     b.Property<int?>("Popularity")
@@ -277,7 +277,7 @@ namespace MovieDingus.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("MovieDingus.Data.Person", b =>
+            modelBuilder.Entity("MovieDbApi.Data.Person", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -302,7 +302,7 @@ namespace MovieDingus.Migrations
                     b.ToTable("Persons");
                 });
 
-            modelBuilder.Entity("MovieDingus.Data.Production_Company", b =>
+            modelBuilder.Entity("MovieDbApi.Data.ProductionCompany", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -315,10 +315,10 @@ namespace MovieDingus.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Production_Companies");
+                    b.ToTable("ProductionCompanies");
                 });
 
-            modelBuilder.Entity("MovieDingus.Data.TV_Network", b =>
+            modelBuilder.Entity("MovieDbApi.Data.TVNetwork", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -331,10 +331,10 @@ namespace MovieDingus.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TV_Networks");
+                    b.ToTable("TVNetworks");
                 });
 
-            modelBuilder.Entity("MovieDingus.Data.TV_Series", b =>
+            modelBuilder.Entity("MovieDbApi.Data.TVSeries", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -350,7 +350,7 @@ namespace MovieDingus.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TV_Serieses");
+                    b.ToTable("TVSerieses");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
