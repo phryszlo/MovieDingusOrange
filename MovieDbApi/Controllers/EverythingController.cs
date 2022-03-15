@@ -58,14 +58,12 @@ id  | row_number
             
             sw.Stop();
 
-            Debug.WriteLine("Diagnostic message"); //oh, yeah, i forgot about this.
-
 
             //Testing idea of generically logging with current method name
             //so you could use this snippet as-is everywhere.
             //Add m.ReflectedType.Name to include classname.
             MethodBase? m = MethodBase.GetCurrentMethod();
-            _logger.LogInformation("{0}: {1} seconds", 
+            Debug.WriteLine("{0}: {1} seconds", 
                 m.Name, 
                 sw.Elapsed.TotalSeconds.ToString());
             
@@ -80,7 +78,9 @@ id  | row_number
         [HttpGet("DoMovieStuff/{type}")]
         public void DoMovieStuff(string type)
         {
-            
+
+            Stopwatch sw = new Stopwatch();
+
             Dingus._logger = _logger; //inject our logger, because who cares?
             Dingus.DateTheExportUrls(false);
             _logger.LogInformation(Dingus.export_urls.ToString());
@@ -123,6 +123,11 @@ id  | row_number
                     break;
 
             }
+            sw.Stop();
+            MethodBase? m = MethodBase.GetCurrentMethod();
+            Debug.WriteLine("{0}: {1} seconds",
+                m.Name,
+                sw.Elapsed.TotalSeconds.ToString());
         }
 
         [HttpGet("loglog")]

@@ -27,11 +27,49 @@ namespace MovieDbApi.Controllers
             _configuration = configuration;
         }
 
-        // GET: api/TVNetwork
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<tv_series>>> GetTVSerieses()
+        public class TVSeriesParameters
         {
-            return await _context.TVSerieses.ToListAsync();
+            const int maxPageSize = 500;
+            public int PageNumber { get; set; } = 1;
+
+            private int _pageSize = 10;
+            public int PageSize
+            {
+                get
+                {
+                    return _pageSize;
+                }
+                set
+                {
+                    _pageSize = (value > maxPageSize) ? maxPageSize : value;
+                }
+            }
+        }
+
+        // GET: api/TVNetwork
+        //[FromQuery]TVSeriesParameters parameters
+        [HttpGet]
+        public async Task<ActionResult<List<tv_series>>> GetTVSerieses([FromQuery] TVSeriesParameters parameters)
+        {
+            var foo = await _context.TVSerieses
+                .Skip(parameters.PageNumber)
+                .Take(parameters.PageSize)
+                .ToListAsync();
+
+
+            Stopwatch sw = Stopwatch.StartNew();
+
+
+            sw.Stop();
+            MethodBase? m = MethodBase.GetCurrentMethod();
+            Debug.WriteLine("{0}.{1}: {2} seconds",
+                m.ReflectedType.Name,
+                m.Name,
+                sw.Elapsed.TotalSeconds.ToString());
+
+            return foo;
+
+
         }
 
         public string imageUrlRoot 
