@@ -1,3 +1,16 @@
+# http://files.tmdb.org/p/exports/movie_ids_04_28_2017.json.gz
+
+
+API_KEY=532b7a2c6a824e4b0529b971cea5ae63
+API_READ_TOKEN=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1MzJiN2EyYzZhODI0ZTRiMDUyOWI5NzFjZWE1YWU2MyIsInN1YiI6IjYyMDU2YjQyMTUxYzVjMDA0MzI4Mzc5YyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.XwvHfAGYu15fT0hUC8vK5bPhWL_7YotClhukM4Jri3o
+
+#example: https://api.themoviedb.org/3/movie/550?api_key=532b7a2c6a824e4b0529b971cea5ae63
+
+IMAGE_URL_EXAMPLE=https://image.tmdb.org/t/p/w400/4ynQYtSEuU5hyipcGkfD6ncwtwz.jpg
+
+# https://image.tmdb.org/t/p/original/WCSZzWdtPmdRxH9LUCVi2JPCSJ.jpg
+
+
 Movies	/p/exports	movie_ids_MM_DD_YYYY.json.gz
 TV Series	/p/exports	tv_series_ids_MM_DD_YYYY.json.gz
 People	/p/exports	person_ids_MM_DD_YYYY.json.gz
@@ -51,3 +64,147 @@ MovieDingus.Pages.Component: Information: /tv_series-list
 MovieDingus.Pages.Component: Information: And the winner is: id
 MovieDingus.Pages.Component: Information: And the winner is: original_name
 MovieDingus.Pages.Component: Information: And the winner is: popularity
+
+
+Task DateTheExportUrls(bool yesterday)
+    {
+        //yesterday flag is set for the option of using yesterday's date in the file names
+        //instead of whatever is already there. this will probably be deprecated.
+        if (!yesterday)
+        {
+            export_urls.Sort();
+
+            //get a list of .json files in Downloads directory
+            List<string> download_names =
+                Directory.GetFiles("./Downloads").Where(g => g.EndsWith(".json"))
+                .ToList();
+
+            List<DateTime> filedates = new List<DateTime>();
+            List<string> filestrings = new List<string>();
+
+            for (int d = 0; d < download_names.Count; d++)
+            {
+                //we don't want the full path, just the file name, so trim it up
+                download_names[d] = Path.GetFileName(download_names[d]);
+
+                string dn = download_names[d];
+                try
+                {
+                    string s = dn.Substring(dn.IndexOf("ids_") + 4, dn.LastIndexOf('.')
+                        - dn.IndexOf("ids_") - 4);
+                    filedates.Add(DateTime.Parse(s.Replace('_', '/')));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+
+            //download_names now has MM_dd_yyyy formatted actual number dates
+
+            filedates.Sort((a, b) => a.CompareTo(b));
+            download_names.Sort(new IntraStringDateComparer());
+
+            string xu, fd, xn;
+
+            //the already-filled (expected) export_urls list loop (names wanted by the API)
+            for (int j = 0; j < export_urls.Count; j++)
+            {
+
+                //the already-downloaded files list loop ((size of download_names == filedates) = TRUE)
+                for (int q = 0; q < filedates.Count; q++)
+                {
+                    //just shorthand
+                    xn = download_names[q];
+                    xu = export_urls[j];
+
+                    //we're trying to get the date of the most recent file of this name from the downloads
+                    fd = filedates[q].ToString("MM_dd_yyyy", CultureInfo.InvariantCulture);
+                    int startindex = 0;  
+
+
+                    var len_xn = xn.LastIndexOf("ids_") + 4;
+                    var len_xu = xu.LastIndexOf("ids_") + 4;
+
+
+                    // Q: can't we just be looking for the first isdigit or something? LINQ?
+                    //      I mean, this method seems too complicated.
+
+
+                    //Is this >= second replacement? 
+                    //If so, it will have the full http://... (mdb_dl_root) prefix.
+                    //If so, do not re-add the mdb_dl_root prefix (i.e. mdb_dl_root). (or we get http://...http://...http://...)
+                    //If so, look for an actual date instead of MM_DD_YYYY to replace.
+                    if (xu.StartsWith(mdb_dl_root))
+                    {
+                        startindex = mdb_dl_root.Length + 1;
+                        var one = xu.Substring(startindex - 1, len_xu - startindex + 1);
+                        var two = xn.Substring(0, len_xn);
+                        if (one == two) //then this is a match
+                        {
+
+                            //load the date portion into a var. it's 10 chars long. last _ occurs after the dd part.
+                            string datepart = xu.Substring(xu.LastIndexOf('_') - 5, 10);
+
+                            export_urls[j] = export_urls[j].Replace(datepart,
+                                filedates[q].ToString("MM_dd_yyyy"));
+                        }
+                    }
+                    else
+                    {
+                        if (xu.Substring(startindex, len_xu)
+                            == xn.Substring(startindex, len_xn)) //then this is a match
+                        {
+                            export_urls[j] = mdb_dl_root + export_urls[j].Replace("MM_DD_YYYY",
+                                filedates[q].ToString("MM_dd_yyyy"));
+                        }
+                    }
+                    //}  end of filename matching
+
+
+                }// end of filedates (q) loop
+
+            }//end of xurls loop (j) -- BTW WTF with these letters? j and q? d?
+
+            _logger.LogInformation("so where are we now?");
+        }
+        else
+        {
+            for (int i = 0; i < export_urls.Count; i++)
+            {
+                export_urls[i] = mdb_dl_root + export_urls[i].Replace("MM_DD_YYYY",
+                    DateTime.Now.AddDays(-1).ToString("MM_dd_yyyy"));
+            }
+        } // end function
+
+        _logger.LogInformation(export_urls[3]);
+        return Task.CompletedTask;
+
+    }
+
+
+
+    System.Text.Json.JsonException
+  HResult=0x80131500
+  Message=The JSON value could not be converted to System.Nullable`1[System.Int32]. Path: $.popularity | LineNumber: 0 | BytePositionInLine: 70.
+  Source=System.Text.Json
+  StackTrace:
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, Utf8JsonReader& reader, Exception ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 utf8Json, JsonTypeInfo jsonTypeInfo, Nullable`1 actualByteCount)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo jsonTypeInfo)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)
+   at MovieDbApi.Data.Json.GetJsonGenericType[T](String json) in C:\src\core\blazor\MovieDingusOrange\MovieDbApi\Data\MovieDBExports.cs:line 15
+   at MovieDbApi.Controllers.EverythingController.StoreExportData(Type type, List`1 fields) in C:\src\core\blazor\MovieDingusOrange\MovieDbApi\Controllers\EverythingController.cs:line 146
+   at MovieDbApi.Controllers.EverythingController.DoMovieStuff(String type) in C:\src\core\blazor\MovieDingusOrange\MovieDbApi\Controllers\EverythingController.cs:line 35
+   at Microsoft.Extensions.Internal.ObjectMethodExecutor.<>c__DisplayClass33_0.<WrapVoidMethod>b__0(Object target, Object[] parameters)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.VoidResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeNextActionFilterAsync()
+
+  This exception was originally thrown at this call stack:
+    [External Code]
+
+Inner Exception 1:
+FormatException: Either the JSON value is not in a supported format, or is out of bounds for an Int32.

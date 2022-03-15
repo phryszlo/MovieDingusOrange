@@ -1,0 +1,153 @@
+  {
+    "adult": false,
+    "backdrop_path": "/k4nMmrC9qodgWExXYJPJmymQMEf.jpg",
+    "created_by": [
+      {
+        "id": 1222946,
+        "credit_id": "58ebc643c3a36872f6089470",
+        "name": "Amy Sherman-Palladino",
+        "gender": 1,
+        "profile_path": null
+      }
+    ],
+    "episode_run_time": [
+      57
+    ],
+    "first_air_date": "2017-03-16",
+    "genres": [
+      {
+        "id": 35,
+        "name": "Comedy"
+      },
+      {
+        "id": 18,
+        "name": "Drama"
+      }
+    ],
+    "homepage": "https://www.amazon.com/dp/B06WPB59TM",
+    "id": 70796,
+    "in_production": true,
+    "languages": [
+      "en"
+    ],
+    "last_air_date": "2022-03-03",
+    "last_episode_to_air": {
+      "air_date": "2022-03-03",
+      "episode_number": 6,
+      "id": 3366706,
+      "name": "Maisel vs. Lennon: The Cut Contest",
+      "overview": "Word of Midge’s act is spreading. Imogene gets a new job and a new name. Sophie just wants to help.",
+      "production_code": "",
+      "season_number": 4,
+      "still_path": "/kgU3zwtK0KSndjdMbs86Hp9GbV9.jpg",
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    "name": "The Marvelous Mrs. Maisel",
+    "next_episode_to_air": {
+      "air_date": "2022-03-10",
+      "episode_number": 7,
+      "id": 3366708,
+      "name": "",
+      "overview": "",
+      "production_code": "",
+      "season_number": 4,
+      "still_path": null,
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    "networks": [
+      {
+        "name": "Amazon",
+        "id": 1024,
+        "logo_path": "/ifhbNuuVnlwYy5oXA5VIb2YR8AZ.png",
+        "origin_country": ""
+      }
+    ],
+    "number_of_episodes": 34,
+    "number_of_seasons": 4,
+    "origin_country": [
+      "US"
+    ],
+    "original_language": "en",
+    "original_name": "The Marvelous Mrs. Maisel",
+    "overview": "It’s 1958 Manhattan and Miriam “Midge” Maisel has everything she’s ever wanted - the perfect husband, kids, and Upper West Side apartment. But when her life suddenly takes a turn and Midge must start over, she discovers a previously unknown talent - one that will take her all the way from the comedy clubs of Greenwich Village to a spot on Johnny Carson’s couch.",
+    "popularity": 105.864,
+    "poster_path": "/yxO0WKUwvk1w1Dvg5uuEmEyyr1.jpg",
+    "production_companies": [
+      {
+        "id": 20581,
+        "logo_path": "/4EIbzjERCX6Eb8W0GLlrzPSPmRS.png",
+        "name": "Picrow",
+        "origin_country": "US"
+      },
+      {
+        "id": 74996,
+        "logo_path": null,
+        "name": "Dorothy Parker Drank Here Productions",
+        "origin_country": "US"
+      },
+      {
+        "id": 20580,
+        "logo_path": "/oRR9EXVoKP9szDkVKlze5HVJS7g.png",
+        "name": "Amazon Studios",
+        "origin_country": "US"
+      }
+    ],
+    "production_countries": [
+      {
+        "iso_3166_1": "US",
+        "name": "United States of America"
+      }
+    ],
+    "seasons": [
+      {
+        "air_date": "2017-03-16",
+        "episode_count": 8,
+        "id": 86349,
+        "name": "Season 1",
+        "overview": "In 1958 New York, Midge Maisel’s life is on track– husband, kids, and elegant Yom Kippur dinners in their Upper West Side apartment. But when her life takes a surprise turn, she has to quickly decide what else she’s good at – and going from housewife to stand-up comic is a wild choice to everyone but her.",
+        "poster_path": "/cr8Z24lsnlVLXtIibcUXSdtICeI.jpg",
+        "season_number": 1
+      },
+      {
+        "air_date": "2018-12-04",
+        "episode_count": 10,
+        "id": 111473,
+        "name": "Season 2",
+        "overview": "After Midge's triumph at the Gaslight, the fallout from her takedown of Sophie Lennon looms large, making her climb up the comedy ladder more challenging than ever. As the actual grind of being a comic begins to take its toll on Midge, the pressure to come clean to her family weighs on her - especially as her choices have a ripple effect on everyone around her.",
+        "poster_path": "/87uuvZqSo7PxtBO1cNfjYFU0hrf.jpg",
+        "season_number": 2
+      },
+      {
+        "air_date": "2019-12-05",
+        "episode_count": 8,
+        "id": 130322,
+        "name": "Season 3",
+        "overview": "Midge and Susie discover that life on tour with Shy is glamorous but humbling, and they learn a lesson about show business they’ll never forget. Joel struggles to support Midge while pursuing his own dreams. Abe embraces a new mission and Rose learns she has talents of her own.",
+        "poster_path": "/4bt5O9RPDFh8QuZw5VYjNOOWHxx.jpg",
+        "season_number": 3
+      },
+      {
+        "air_date": "2022-02-17",
+        "episode_count": 8,
+        "id": 138081,
+        "name": "Season 4",
+        "overview": "It's 1960 and change is in the air. Looking to hone her act, Midge finds a gig with total creative freedom. But her commitment to her craft—and the places it takes her—creates a rift between her and the family and friends around her.",
+        "poster_path": "/yxO0WKUwvk1w1Dvg5uuEmEyyr1.jpg",
+        "season_number": 4
+      }
+    ],
+    "spoken_languages": [
+      {
+        "english_name": "English",
+        "iso_639_1": "en",
+        "name": "English"
+      }
+    ],
+    "status": "Returning Series",
+    "tagline": "",
+    "type": "Scripted",
+    "vote_average": 8.1,
+    "vote_count": 419
+  }

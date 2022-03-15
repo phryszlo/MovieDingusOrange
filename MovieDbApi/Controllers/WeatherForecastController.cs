@@ -30,6 +30,7 @@ namespace MovieDbApi.Controllers
                     Summary = Summaries[Random.Shared.Next(Summaries.Length)]
                 })
                 .ToArray();
+                _logger.LogInformation("why why why");
                 _logger.LogInformation(arreh[0].Summary);
                 return arreh;
             }

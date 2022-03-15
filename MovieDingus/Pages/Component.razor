@@ -44,7 +44,7 @@
     {
         public int Compare(string? a, string? b)
         {
-            string date1 = "0"; 
+            string date1 = "0";
             string date2 = "0";
             if (a is not null && b is not null)
             {
@@ -70,13 +70,13 @@
 
     Task DateTheExportUrls(bool yesterday)
     {
-        //yesterday flag is set for the option of using yesterday's date in the file names
-        //instead of whatever is already there. this will probably be deprecated.
+        // yesterday flag is set for the option of using yesterday's date in the file names
+        //  instead of whatever is already there. this will probably be deprecated, because why?
         if (!yesterday)
         {
             export_urls.Sort();
 
-            //get a list of .json files in Downloads directory
+            // get a list of .json files in Downloads directory
             List<string> download_names =
                 Directory.GetFiles("./Downloads").Where(g => g.EndsWith(".json"))
                 .ToList();
@@ -86,7 +86,7 @@
 
             for (int d = 0; d < download_names.Count; d++)
             {
-                //we don't want the full path, just the file name, so trim it up
+                // we don't want the full path, just the file name, so trim it up
                 download_names[d] = Path.GetFileName(download_names[d]);
 
                 string dn = download_names[d];
@@ -102,38 +102,39 @@
                 }
             }
 
-            //download_names now has MM_dd_yyyy formatted actual number dates
+            // download_names now has MM_dd_yyyy formatted actual number dates
 
             filedates.Sort((a, b) => a.CompareTo(b));
             download_names.Sort(new IntraStringDateComparer());
 
+            // shorthand - you'll probably change these later for readability justifications
             string xu, fd, xn;
 
-            //the already-filled (expected) export_urls list loop (names wanted by the API)
-            for (int j = 0; j < export_urls.Count; j++)
+            // the export_urls list loop
+            // (pre-filled/hardcoded: the filename portion of the urls wanted by the mdb API)
+            for (int current_xu = 0; current_xu < export_urls.Count; current_xu++)
             {
 
-                //the already-downloaded files list loop ((size of download_names == filedates) = TRUE)
-                for (int q = 0; q < filedates.Count; q++)
+                // the already-downloaded files list loop ((download_names.count == filedates.count) = TRUE)
+                for (int current_name = 0; current_name < download_names.Count; current_name++)
                 {
-                    //just shorthand
-                    xn = download_names[q];
-                    xu = export_urls[j];
+                    xn = download_names[current_name];
+                    xu = export_urls[current_xu];
 
-                    //we're trying to get the date of the most recent file of this name from the downloads
-                    fd = filedates[q].ToString("MM_dd_yyyy", CultureInfo.InvariantCulture);
-                    int startindex = 0;  
-
+                    //we're trying to get the date of the most recent file OF THIS NAME
+                    // (download_names[current_name] from the downloads
+                    fd = filedates[current_name].ToString("MM_dd_yyyy", CultureInfo.InvariantCulture);
+                    int startindex = 0;
 
                     var len_xn = xn.LastIndexOf("ids_") + 4;
                     var len_xu = xu.LastIndexOf("ids_") + 4;
 
 
-                    // Q: can't we just be looking for the first isdigit or something? LINQ?
+                    // CRITIC: Can't we just be looking for the first isdigit or something? LINQ?
                     //      I mean, this method seems too complicated.
+                    // CRITIC: Maybe it's just all these comments making it look too complicated.
 
-
-                    //Is this >= second replacement? 
+                    //Is this >= second replacement?
                     //If so, it will have the full http://... (mdb_dl_root) prefix.
                     //If so, do not re-add the mdb_dl_root prefix (i.e. mdb_dl_root). (or we get http://...http://...http://...)
                     //If so, look for an actual date instead of MM_DD_YYYY to replace.
@@ -148,8 +149,8 @@
                             //load the date portion into a var. it's 10 chars long. last _ occurs after the dd part.
                             string datepart = xu.Substring(xu.LastIndexOf('_') - 5, 10);
 
-                            export_urls[j] = export_urls[j].Replace(datepart,
-                                filedates[q].ToString("MM_dd_yyyy"));
+                            export_urls[current_xu] = export_urls[current_xu].Replace(datepart,
+                                filedates[current_name].ToString("MM_dd_yyyy"));
                         }
                     }
                     else
@@ -157,20 +158,20 @@
                         if (xu.Substring(startindex, len_xu)
                             == xn.Substring(startindex, len_xn)) //then this is a match
                         {
-                            export_urls[j] = mdb_dl_root + export_urls[j].Replace("MM_DD_YYYY",
-                                filedates[q].ToString("MM_dd_yyyy"));
+                            export_urls[current_xu] = mdb_dl_root + export_urls[current_xu].Replace("MM_DD_YYYY",
+                                filedates[current_name].ToString("MM_dd_yyyy"));
                         }
                     }
                     //}  end of filename matching
 
 
-                }// end of filedates (q) loop
+                }// end of download_names (current_name) loop
 
             }//end of xurls loop (j) -- BTW WTF with these letters? j and q? d?
 
             _logger.LogInformation("so where are we now?");
         }
-        else
+        else // (yesterday = true)
         {
             for (int i = 0; i < export_urls.Count; i++)
             {
@@ -197,24 +198,6 @@
         DateTime.Now.AddDays(-1).ToString("MM_dd_yyyy"));
     private string url = "";
 
-    //public class Network
-    //{
-    //    public int id { get; set; }
-    //    public string? name { get; set; }
-    //}
-    //public class NetworkCollection
-    //{
-    //    public NetworkCollection()
-    //    {
-    //        Networks = new List<Network>
-    //();
-    //    }
-    //    public List<Network>
-    //        Networks
-    //    { get; set; }
-    //}
-
-
 
     /*
     * THE CLICK
@@ -222,12 +205,10 @@
 
     void ClickHandler(MouseEventArgs args)
     {
-        DateTheExportUrls(true);
+        //DateTheExportUrls(true);
 
         ImportExports();
-        return;
-
-
+        //return;
     }
 
     private async void ImportExports()
@@ -263,6 +244,9 @@
 
     }
 
+    /*
+     * Loop through the export_urls list and call ProcessJsonFile on each.
+     */
     async void ProcessJsonFiles()
     {
         await DateTheExportUrls(false);
@@ -295,8 +279,6 @@
             _logger.LogInformation(root.ValueKind.ToString());
 
             var thing = root.EnumerateObject();
-
-
             using var thingy = thing.GetEnumerator();
 
             //first up, the root object
@@ -304,9 +286,9 @@
             {
                 var current = thingy.Current;
 
-                //this will be the property name of the array,
-                //e.g. "production_company-list"
-                //deal with this plural spelling problem and that will be your table name
+                // current.Name will be the property name of the array,
+                //  e.g. "production_company-list"
+                //  deal with this plural spelling problem and that will be your table name
                 _logger.LogInformation(current.Name);
                 var doodad = current.Value.EnumerateArray();
 
@@ -340,21 +322,7 @@
 
         //return Task.CompletedTask;
 
-
-        //.Any(o => o.EnumerateObject().Any(p => p.Name == propertyName));
-
-        //JsonElement networksElement = root.GetProperty("Networks");
-        //NetworkCollection netList = new NetworkCollection();
-
-        //foreach (JsonElement network in networksElement.EnumerateArray())
-        //{
-        //    Network net = new Network();
-        //    net.id = Convert.ToInt32(network.GetProperty("id").ToString());
-        //    net.name = network.GetProperty("name").ToString();
-        //    netList.Networks.Add(net);
-
-        //}
     }
 
-        }
-        }
+  }
+  }

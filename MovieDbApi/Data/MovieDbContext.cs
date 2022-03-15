@@ -35,8 +35,9 @@ namespace MovieDbApi.Data
                    .SetBasePath(Directory.GetCurrentDirectory())
                    .AddJsonFile("appsettings.json")
                    .Build();
-                var connectionString = configuration.GetConnectionString("PGConnection");
-                optionsBuilder.UseNpgsql(connectionString);
+                var connectionString = configuration.GetConnectionString("SQLConnection");
+                //optionsBuilder.UseNpgsql(connectionString);
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 

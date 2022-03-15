@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieDbApi.Data;
 
@@ -11,9 +12,10 @@ using MovieDbApi.Data;
 namespace MovieDbApi.Migrations
 {
     [DbContext(typeof(MovieDbContext))]
-    partial class MovieDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220314230835_MSSQL1")]
+    partial class MSSQL1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -223,7 +225,10 @@ namespace MovieDbApi.Migrations
             modelBuilder.Entity("MovieDbApi.Data.collection", b =>
                 {
                     b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
@@ -236,7 +241,10 @@ namespace MovieDbApi.Migrations
             modelBuilder.Entity("MovieDbApi.Data.keyword", b =>
                 {
                     b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
@@ -249,7 +257,10 @@ namespace MovieDbApi.Migrations
             modelBuilder.Entity("MovieDbApi.Data.movie", b =>
                 {
                     b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
                     b.Property<bool>("adult")
                         .HasColumnType("bit");
@@ -271,7 +282,10 @@ namespace MovieDbApi.Migrations
             modelBuilder.Entity("MovieDbApi.Data.person", b =>
                 {
                     b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
                     b.Property<bool>("adult")
                         .HasColumnType("bit");
@@ -293,7 +307,10 @@ namespace MovieDbApi.Migrations
             modelBuilder.Entity("MovieDbApi.Data.production_company", b =>
                 {
                     b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
@@ -306,7 +323,10 @@ namespace MovieDbApi.Migrations
             modelBuilder.Entity("MovieDbApi.Data.tv_network", b =>
                 {
                     b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
                     b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
@@ -319,7 +339,10 @@ namespace MovieDbApi.Migrations
             modelBuilder.Entity("MovieDbApi.Data.tv_series", b =>
                 {
                     b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"), 1L, 1);
 
                     b.Property<string>("original_name")
                         .HasColumnType("nvarchar(max)");

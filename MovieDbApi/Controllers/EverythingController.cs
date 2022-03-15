@@ -3,6 +3,8 @@ using MovieDbApi.Data;
 using System.Reflection;
 using System.Text.Json;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace MovieDbApi.Controllers
 {
     [ApiController]
@@ -10,104 +12,15 @@ namespace MovieDbApi.Controllers
     public class EverythingController : ControllerBase
     {
         public readonly ILogger<EverythingController> _logger;
-        public EverythingController(ILogger<EverythingController> logger)
+        private readonly MovieDbContext _context;
+
+        public EverythingController(ILogger<EverythingController> logger, MovieDbContext context)
         {
             _logger = logger;
+            _context = context;
+
         }
 
-        [HttpGet("StoreExportData")]
-        public void StoreExportData()
-        {
-            //getting names of DbSet properties from MovieDbContext
-            //for some reason yet to be determined.
-
-            MemberInfo[] fields = typeof(MovieDbContext).GetMembers();
-
-            MovieDbContext foo = new MovieDbContext();
-            foreach (var prop in foo.GetType().GetProperties())
-            {
-                if (prop.DeclaringType == typeof(MovieDbContext))
-                {
-                    //_logger.LogInformation(prop.DeclaringType.Name);
-                    _logger.LogInformation(prop.Name);
-                }
-
-            }
-
-
-            using (var dbcontext = new MovieDbContext())
-            {
-                List<TypeValue> allexportfields = new List<TypeValue>();
-                TypeValue id = new TypeValue(typeof(int), "id");
-                TypeValue original_title = new TypeValue(typeof(string), "original_title");
-                TypeValue name = new TypeValue(typeof(string), "original_title");
-                TypeValue adult = new TypeValue(typeof(bool), "adult");
-                TypeValue popularity = new TypeValue(typeof(int), "popularity");
-                TypeValue video = new TypeValue(typeof(bool), "video");
-                allexportfields.AddRange(new List<TypeValue> {
-                    id, original_title , name , adult , popularity, video
-                });
-
-
-                foreach(var field in allexportfields)
-                {
-
-                }
-
-                List<TypeValue> Moviefields = new List<TypeValue>();
-                Moviefields.Add(id);
-                Moviefields.Add(original_title);
-                Moviefields.Add(adult);
-                Moviefields.Add(popularity);
-                Moviefields.Add(video);
-
-                List<TypeValue> Collectionfields = new List<TypeValue>();
-                Collectionfields.Add(id);
-                Collectionfields.Add(name);
-
-                List<TypeValue> Keywordfields = new List<TypeValue>();
-                Keywordfields.Add(id);
-                Keywordfields.Add(name);
-
-                List<TypeValue> Personfields = new List<TypeValue>();
-                Personfields.Add(id);
-                Personfields.Add(name);
-                Personfields.Add(adult);
-                Personfields.Add(popularity);
-                Personfields.Add(video);
-
-                List<TypeValue> ProductionCompanyfields = new List<TypeValue>();
-                ProductionCompanyfields.Add(id);
-                ProductionCompanyfields.Add(name);
-
-                List<TypeValue> TVNetworkfields = new List<TypeValue>();
-                TVNetworkfields.Add(id);
-                TVNetworkfields.Add(name);
-
-                List<TypeValue> TVSeriesfields = new List<TypeValue>();
-                TVSeriesfields.Add(id);
-                TVSeriesfields.Add(name);
-                TVSeriesfields.Add(popularity);
-
-
-
-
-                var thingy = JsonData<collection>(
-                        @".\Downloads\collection_ids_02_15_2022.json",
-                        Collectionfields, typeof(collection));
-                dbcontext.Collections
-                    .AddRange((collection[])thingy);
-                dbcontext.SaveChanges();
-            }
-        }
-
-        private Type[] GetTypesInNamespace(Assembly assembly, string nameSpace)
-        {
-            return
-              assembly.GetTypes()
-                      .Where(t => String.Equals(t.Namespace, nameSpace, StringComparison.Ordinal))
-                      .ToArray();
-        }
 
         class TypeValue
         {
@@ -116,73 +29,115 @@ namespace MovieDbApi.Controllers
                 type = t;
                 value = v;
             }
-            public Type? type { get; set; }
+            public Type type { get; set; }
             public string? value { get; set; }
 
         }
 
-        private Object[] JsonData<T>(string filepath, List<TypeValue> fields, Type type)
+
+
+        /*
+ * edb=# select * from (
+moviedb(# select "id", row_number() over (order by id)
+moviedb(# from "TVNetworks"
+moviedb(# ) as foo
+moviedb-# where row_number = 799;
+id  | row_number
+*/
+        [HttpGet("GetIDFromRowNumber/{row_num}")]
+        public int GetIDFromRowNumber(int row_num)
         {
-            string json = System.IO.File.ReadAllText(filepath);
+            Stopwatch sw = new Stopwatch();
 
-            Type t = type.GetType().GetProperty("Value").PropertyType;
-            var proptype = typeof(T);
-            var OT = proptype.MakeGenericType(t);
+            var pg_sql = @"select * from (select ""id"", row_number() over (order by id)
+                    from ""TVNetworks"") AS foo WHERE row_number = "
+                    + row_num.ToString() + ";";
+            System.FormattableString ms_sql = $@"select * from (select id, name, row_number() over (order by id)
+                    as row_num from TVNetworks) foo WHERE row_num = {row_num}";
+            var result = _context.TVNetworks.FromSqlInterpolated(ms_sql);
+            
+            sw.Stop();
 
-
-            //dynamic objecttype = type.GetType().GetProperty("Value").GetValue(type, null);
-
-            List<T> collections = new List<T>();
-
-            return null;
-
-            //var options = new JsonDocumentOptions
-            //{
-            //    AllowTrailingCommas = true,
-            //};
-            //using (JsonDocument document = JsonDocument.Parse(json, options))
-            //{
-            //    JsonElement root = document.RootElement;
-
-            //    _logger.LogInformation(root.ValueKind.ToString());
-
-            //    var thing = root.EnumerateObject();
-            //    using var thingy = thing.GetEnumerator();
-
-            //    while (thingy.MoveNext())
-            //    {
-            //        //root object
-            //        var current = thingy.Current;
-            //        _logger.LogInformation(current.Name);
-            //        var array = current.Value.EnumerateArray();
+            Debug.WriteLine("Diagnostic message"); //oh, yeah, i forgot about this.
 
 
-            //        //the big array of objects
-            //        while (array.MoveNext())
-            //        {
-            //            var currant = array.Current;
-            //            collection collectio = new collection();
-            //            collectio.id = Convert.ToInt32(currant.GetProperty("id").ToString());
-            //            collectio.name = currant.GetProperty("name").ToString();
-            //            collections.Add(collectio);
-            //        }
-            //    }
+            //Testing idea of generically logging with current method name
+            //so you could use this snippet as-is everywhere.
+            //Add m.ReflectedType.Name to include classname.
+            MethodBase? m = MethodBase.GetCurrentMethod();
+            _logger.LogInformation("{0}: {1} seconds", 
+                m.Name, 
+                sw.Elapsed.TotalSeconds.ToString());
+            
+            
 
-            //}
-
-            //_logger.LogInformation(returnType.ToString());
-            //return collections.ToArray<collection>();
-
+            return result.Count() > 0 ? result.First().id : -1;
         }
 
 
-        [HttpGet(Name = "GetCollections")]
-        public IEnumerable<collection> GetCollections()
-        {
-            string file = @".\Downloads\collection_ids_02_15_2022.json";
-            string json = System.IO.File.ReadAllText(file);
 
-            List<collection> collections = new List<collection>();
+
+        [HttpGet("DoMovieStuff/{type}")]
+        public void DoMovieStuff(string type)
+        {
+            
+            Dingus._logger = _logger; //inject our logger, because who cares?
+            Dingus.DateTheExportUrls(false);
+            _logger.LogInformation(Dingus.export_urls.ToString());
+            List<string> fields = Dingus.FieldsOfThis(typeof(production_company));
+            foreach (string field in fields)
+            {
+                _logger.LogInformation(field);
+            }
+            switch (type)
+            {
+                case "movie":
+                    StoreExportData(typeof(movie), fields);
+
+                    break;
+                case "keyword":
+                    StoreExportData(typeof(keyword), fields);
+
+                    break;
+                case "collection":
+                    StoreExportData(typeof(collection), fields);
+
+                    break;
+                case "person":
+                    StoreExportData(typeof(person), fields);
+
+                    break;
+                case "production_company":
+                    StoreExportData(typeof(production_company), fields);
+                    break;
+                case "tv_network":
+                    StoreExportData(typeof(tv_network), fields);
+
+                    break;
+                case "tv_series":
+                    StoreExportData(typeof(tv_series), fields);
+
+                    break;
+                default:
+                    _logger.LogInformation("no switch found");
+                    break;
+
+            }
+        }
+
+        [HttpGet("loglog")]
+        public void loglog()
+        {
+            Dingus.LogSomething();
+        }
+
+        [NonAction]
+        private List<JsonElement> JsonData(string filepath, List<TypeValue> fields)
+        {
+            string json = System.IO.File.ReadAllText(filepath);
+            List<JsonElement> list = new List<JsonElement>();
+
+            object[] objarr = new object[0];
 
             var options = new JsonDocumentOptions
             {
@@ -191,6 +146,7 @@ namespace MovieDbApi.Controllers
             using (JsonDocument document = JsonDocument.Parse(json, options))
             {
                 JsonElement root = document.RootElement;
+                var clone = root.Clone();
 
                 _logger.LogInformation(root.ValueKind.ToString());
 
@@ -204,52 +160,133 @@ namespace MovieDbApi.Controllers
                     _logger.LogInformation(current.Name);
                     var array = current.Value.EnumerateArray();
 
-
                     //the big array of objects
                     while (array.MoveNext())
                     {
                         var currant = array.Current;
-                        collection collection = new collection();
-                        collection.id = Convert.ToInt32(currant.GetProperty("id").ToString());
-                        collection.name = currant.GetProperty("name").ToString();
-                        collections.Add(collection);
+                        list.Add(currant.Clone());
                     }
                 }
 
             }
-            return collections;
 
+            return list;
         }
 
-        //[HttpGet(Name = "GetKeywords")]
-        //public IEnumerable<Keyword> GetKeywords()
-        //{
 
-        //}
-        //[HttpGet(Name = "GetMovies")]
-        //public IEnumerable<Movie> GetMovies()
-        //{
+        [NonAction]
+        public void StoreExportData(Type type, List<string> fields)
+        {
+            // getting names of DbSet properties from MovieDbContext
+            //   for some reason : TBD.
 
-        //}
-        //[HttpGet(Name = "GetPeople")]
-        //public IEnumerable<Person> GetPeople()
-        //{
+            MemberInfo[] members = typeof(MovieDbContext).GetMembers();
+            MovieDbContext foo = new MovieDbContext();
+            foreach (var prop in foo.GetType().GetProperties())
+            {
+                if (prop.DeclaringType == typeof(MovieDbContext))
+                {
+                    //_logger.LogInformation(prop.DeclaringType.Name);
+                    _logger.LogInformation(prop.Name);
+                }
 
-        //}
-        //[HttpGet(Name = "GetProductionCompanies")]
-        //public IEnumerable<ProductionCompany> GetProductionCompanies()
-        //{
+            }
+            // and That, was how to get the DbSet names from the DbContext
 
-        //}
-        //[HttpGet(Name = "GetTVNetworks")]
-        //public IEnumerable<TVNetwork> GetTVNetworks()
-        //{
 
-        //}
-        //[HttpGet(Name = "GetTVSeries")]
-        //public IEnumerable<TVSeries> GetTVSeries()
-        //{
+            using (var dbcontext = new MovieDbContext())
+            {
+                List<TypeValue> allexportfields = new List<TypeValue>();
+                TypeValue id = new TypeValue(typeof(int), "id");
+                TypeValue original_title = new TypeValue(typeof(string), "original_title");
+                TypeValue name = new TypeValue(typeof(string), "original_title");
+                TypeValue adult = new TypeValue(typeof(bool), "adult");
+                TypeValue popularity = new TypeValue(typeof(float), "popularity");
+                TypeValue video = new TypeValue(typeof(bool), "video");
+                allexportfields.AddRange(new List<TypeValue> {
+                    id, original_title , name , adult , popularity, video
+                });
 
-        //}
+                List<TypeValue> TypeValsForThisThingHere = new List<TypeValue>();
+                foreach(var field in fields)
+                {
+                    var TV = new TypeValue(typeof(object), "foo");
+                    foreach(var tv in allexportfields)
+                    {
+                        if (field == tv.value)
+                        {
+                            TV.type = tv.type;
+                            TV.value = tv.value;
+                        }
+
+                    }
+                    TypeValsForThisThingHere.Add(TV);
+                }
+
+                // at this point we have a Type and value (fieldname) for each
+                //   member of the class type which was passed to this method.
+
+                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                sw.Start();
+                List<JsonElement> list = JsonData(
+                        Dingus.MakePathFromType(type),
+                        TypeValsForThisThingHere);
+                sw.Stop();
+                _logger.LogInformation("Elapsed: {0} seconds", sw.Elapsed.TotalSeconds.ToString());
+
+                List<production_company> productions = new List<production_company>();
+                List<movie> movies = new List<movie>();
+                List<keyword> keywords = new List<keyword>();
+                List<person> persons = new List<person>();
+                List<collection> collections = new List<collection>();
+                List<tv_network> tv_networks = new List<tv_network>();
+                List<tv_series> tv_serieses = new List<tv_series>();
+
+                for(int i = 0; i < list.Count; i++)
+                {
+                    // THE COP OUT
+                    switch (type.Name)
+                    {
+                        case "movie":
+                            movie? _movie = Json.GetJsonGenericType<movie>(list[i].ToString());
+                            dbcontext.Movies.Add(_movie);
+                            break;
+                        case "keyword":
+                            keyword? _keyword = Json.GetJsonGenericType<keyword>(list[i].ToString());
+                            dbcontext.Keywords.Add(_keyword);
+                            break;
+                        case "collection":
+                            collection? _collection = Json.GetJsonGenericType<collection>(list[i].ToString());
+                            dbcontext.Collections.Add(_collection);
+                            break;
+                        case "person":
+                            person? _person = Json.GetJsonGenericType<person>(list[i].ToString());
+                            dbcontext.Persons.Add(_person);
+                            break;
+                        case "production_company":
+                            production_company? _production = Json.GetJsonGenericType<production_company>(list[i].ToString());
+                            dbcontext.ProductionCompanies.Add(_production);
+                            break;
+                        case "tv_network":
+                            tv_network? _tv_network = Json.GetJsonGenericType<tv_network>(list[i].ToString());
+#pragma warning disable CS8604 // Possible null reference argument.
+                            _ = dbcontext.TVNetworks.Add(_tv_network);
+#pragma warning restore CS8604 // Possible null reference argument.
+                            break;
+                        case "tv_series":
+                            tv_series? _tv_series = Json.GetJsonGenericType<tv_series>(list[i].ToString());
+                            dbcontext.TVSerieses.Add(_tv_series);
+                            break;
+                        default:
+                            _logger.LogInformation("no switch found");
+                            break;
+
+                    }
+
+                }
+
+                dbcontext.SaveChanges();
+            }
+        }
     }
 }

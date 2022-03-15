@@ -1,0 +1,4 @@
+﻿
+var whatever = JsonDocument.Parse(stringifiedJson);
+var next_episode = document.RootElement.GetProperty("next_episode_to_air").GetString();
+
